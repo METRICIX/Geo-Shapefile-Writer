@@ -2,13 +2,16 @@ use 5.010;
 use strict;
 use warnings;
 
+# $Id: Writer.pm 10 2012-08-02 06:18:45Z xliosha@gmail.com $
+
 package Geo::Shapefile::Writer;
 {
-  $Geo::Shapefile::Writer::VERSION = '0.002';
+  $Geo::Shapefile::Writer::VERSION = '0.003';
 }
+
+# NAME: Geo::Shapefile::Writer
 # ABSTRACT: simple pureperl shapefile writer
 
-# $Id: Writer.pm 8 2012-04-26 13:23:25Z xliosha@gmail.com $
 
 
 use utf8;
@@ -89,14 +92,14 @@ sub new {
 my $header_size = 100;
 # position, pack_type, object_field, default
 my @header_fields = (
-    [ 0,  'N', undef,   9994 ], # magic
+    [ 0,  'N', undef,   9994 ],             # magic
     [ 24, 'N', _SIZE => $header_size / 2 ], # file size in 16-bit words
-    [ 28, 'L', undef,   1000 ], # version
+    [ 28, 'L', undef,   1000 ],             # version
     [ 32, 'L', 'TYPE' ],
     [ 36, 'd', 'XMIN' ],
-    [ 40, 'd', 'YMIN' ],
-    [ 44, 'd', 'XMAX' ],
-    [ 48, 'd', 'YMAX' ],
+    [ 44, 'd', 'YMIN' ],
+    [ 52, 'd', 'XMAX' ],
+    [ 60, 'd', 'YMAX' ],
 );
 
 sub _get_header {
@@ -213,12 +216,25 @@ Geo::Shapefile::Writer - simple pureperl shapefile writer
 
 =head1 VERSION
 
-version 0.002
+version 0.003
+
+=head1 SYNOPSIS
+
+    my $shp_writer = Geo::Shapefile::Writer->new( 'summits', 'POINT',
+        [ name => 'C', 100 ],
+        [ elevation => 'N', 8, 0 ],
+    );
+
+    $shp_writer->add_shape( [86.925278, 27.988056], 'Everest', 8848 );
+    $shp_writer->add_shape( [42.436944, 43.353056], { name => 'Elbrus', elevation => 5642 } );
+
+    $shp_writer->finalize();
 
 =head1 DESCRIPTION
 
 Geo::Shapelib is cool, but not portable.
-So here is alternative, if you need just simple shp export.
+
+So here is an alternative, if you need just simple shp export.
 
 =head1 METHODS
 
@@ -227,18 +243,23 @@ So here is alternative, if you need just simple shp export.
     my $shp_writer = Geo::Shapefile::Writer->new( $name, $type, @attr_descriptions );
 
 Create object and 3 associated files.
-Possible attribute description formats:
-* scalar - just field name
-* arrayref [ $name, $type, $length, $decimals ]
-* hashref { name => $name, type => 'N', length => 8,  decimals => 0 } - CAM::DBF-compatible 
 
-Defaults will be used if field is not completely described
+Possible types: POINT, POLYLINE, POLYGON, more to be implemented.
+
+Possible attribute description formats:
+  * scalar - just field name
+  * arrayref - [ $name, $type, $length, $decimals ]
+  * hashref - { name => $name, type => 'N', length => 8,  decimals => 0 } - CAM::DBF-compatible 
+
+Default C(64) will be used if field is not completely described
 
 =head2 add_shape
 
-    $shp_writer->add_shape( $object, @attributes );
+    $shp_writer->add_shape( $shape, @attributes );
 
-Attributes are array or arrayref or hashref
+$shape is point: [$x,$y], or array of points: [[$x0,$y0], ...], based on shape type.
+
+Attributes are array or arrayref: [$val1, $val2, ...] or hashref: { $name1 => $val1, ...}
 
 =head2 finalize
 
