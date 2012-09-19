@@ -2,11 +2,11 @@ use 5.010;
 use strict;
 use warnings;
 
-# $Id: Writer.pm 10 2012-08-02 06:18:45Z xliosha@gmail.com $
+# $Id: Writer.pm 13 2012-09-19 05:54:49Z xliosha@gmail.com $
 
 package Geo::Shapefile::Writer;
 {
-  $Geo::Shapefile::Writer::VERSION = '0.003';
+  $Geo::Shapefile::Writer::VERSION = '0.0031';
 }
 
 # NAME: Geo::Shapefile::Writer
@@ -216,7 +216,7 @@ Geo::Shapefile::Writer - simple pureperl shapefile writer
 
 =head1 VERSION
 
-version 0.003
+version 0.0031
 
 =head1 SYNOPSIS
 
@@ -247,8 +247,11 @@ Create object and 3 associated files.
 Possible types: POINT, POLYLINE, POLYGON, more to be implemented.
 
 Possible attribute description formats:
+
   * scalar - just field name
+
   * arrayref - [ $name, $type, $length, $decimals ]
+
   * hashref - { name => $name, type => 'N', length => 8,  decimals => 0 } - CAM::DBF-compatible 
 
 Default C(64) will be used if field is not completely described
@@ -257,7 +260,11 @@ Default C(64) will be used if field is not completely described
 
     $shp_writer->add_shape( $shape, @attributes );
 
-$shape is point: [$x,$y], or array of points: [[$x0,$y0], ...], based on shape type.
+$shape depends on file type:
+
+  * point: [$x,$y]
+
+  * polyline or polygon: [ [[$x0,$y0], ...], \@part2, ... ] 
 
 Attributes are array or arrayref: [$val1, $val2, ...] or hashref: { $name1 => $val1, ...}
 
