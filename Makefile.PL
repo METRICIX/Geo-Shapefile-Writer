@@ -12,7 +12,8 @@ my %WriteMakefileArgs = (
   "ABSTRACT" => "simple pureperl shapefile writer",
   "AUTHOR" => "liosha <liosha\@cpan.org>",
   "BUILD_REQUIRES" => {
-    "English" => 0,
+    "File::Temp" => 0,
+    "Test::Exception" => 0,
     "Test::More" => 0
   },
   "CONFIGURE_REQUIRES" => {
@@ -31,7 +32,7 @@ my %WriteMakefileArgs = (
     "utf8" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.0031",
+  "VERSION" => "0.004",
   "test" => {
     "TESTS" => "t/*.t"
   }

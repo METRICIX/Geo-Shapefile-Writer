@@ -1,18 +1,17 @@
-use 5.010;
-use strict;
-use warnings;
-
-# $Id: Writer.pm 13 2012-09-19 05:54:49Z xliosha@gmail.com $
-
 package Geo::Shapefile::Writer;
 {
-  $Geo::Shapefile::Writer::VERSION = '0.0031';
+  $Geo::Shapefile::Writer::VERSION = '0.004';
 }
+
+# $Id: Writer.pm 14 2012-12-28 12:34:05Z xliosha@gmail.com $
 
 # NAME: Geo::Shapefile::Writer
 # ABSTRACT: simple pureperl shapefile writer
 
 
+use 5.010;
+use strict;
+use warnings;
 
 use utf8;
 use autodie;
@@ -216,7 +215,7 @@ Geo::Shapefile::Writer - simple pureperl shapefile writer
 
 =head1 VERSION
 
-version 0.0031
+version 0.004
 
 =head1 SYNOPSIS
 
@@ -244,7 +243,7 @@ So here is an alternative, if you need just simple shp export.
 
 Create object and 3 associated files.
 
-Possible types: POINT, POLYLINE, POLYGON, more to be implemented.
+Possible types: POINT, POLYLINE, POLYGON (more to be implemented).
 
 Possible attribute description formats:
 
