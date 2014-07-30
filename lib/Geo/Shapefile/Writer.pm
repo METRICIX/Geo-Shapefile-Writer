@@ -1,9 +1,9 @@
 package Geo::Shapefile::Writer;
 {
-  $Geo::Shapefile::Writer::VERSION = '0.004';
+  $Geo::Shapefile::Writer::VERSION = '0.005';
 }
 
-# $Id: Writer.pm 14 2012-12-28 12:34:05Z xliosha@gmail.com $
+# $Id: Writer.pm 16 2014-07-30 08:16:24Z xliosha@gmail.com $
 
 # NAME: Geo::Shapefile::Writer
 # ABSTRACT: simple pureperl shapefile writer
@@ -122,39 +122,38 @@ sub add_shape {
     my ($xmin, $ymin, $xmax, $ymax);
 
     my $rdata;
-    given ( $self->{TYPE} ) {
-        when ( $shape_type{NULL} ) {
-            $rdata = pack( 'L', $self->{TYPE} );
-        }
+    my $type = $self->{TYPE};
 
-        when ( $shape_type{POINT} ) {
-            $rdata = pack( 'Ldd', $self->{TYPE}, @$data );
-            ($xmin, $ymin, $xmax, $ymax) = ( @$data, @$data );
-        }
-
-        when ( [ @shape_type{'POLYLINE','POLYGON'} ] ) {
-            my $rpart = q{};
-            my $rpoint = q{};
-            my $ipoint = 0;
-
-            for my $line ( @$data ) {
-                $rpart .= pack 'L', $ipoint;
-                for my $point ( @$line ) {
-                    my ($x, $y) = @$point;
-                    $rpoint .= pack 'dd', $x, $y;
-                    $ipoint ++;
-                }
-            }
-
-            $xmin = min map {$_->[0]} map {@$_} @$data;
-            $ymin = min map {$_->[1]} map {@$_} @$data;
-            $xmax = max map {$_->[0]} map {@$_} @$data;
-            $ymax = max map {$_->[1]} map {@$_} @$data;
-
-            $rdata = pack 'LddddLL', $self->{TYPE}, $xmin, $ymin, $xmax, $ymax, scalar @$data, $ipoint;
-            $rdata .= $rpart . $rpoint;
-        }
+    if ($type == $shape_type{NULL} ) {
+        $rdata = pack( 'L', $self->{TYPE} );
     }
+    elsif ($type == $shape_type{POINT} ) {
+        $rdata = pack( 'Ldd', $self->{TYPE}, @$data );
+        ($xmin, $ymin, $xmax, $ymax) = ( @$data, @$data );
+    }
+    elsif ($type == $shape_type{POLYLINE} || $type == $shape_type{POLYGON} ) {
+        my $rpart = q{};
+        my $rpoint = q{};
+        my $ipoint = 0;
+
+        for my $line ( @$data ) {
+            $rpart .= pack 'L', $ipoint;
+            for my $point ( @$line ) {
+                my ($x, $y) = @$point;
+                $rpoint .= pack 'dd', $x, $y;
+                $ipoint ++;
+            }
+        }
+
+        $xmin = min map {$_->[0]} map {@$_} @$data;
+        $ymin = min map {$_->[1]} map {@$_} @$data;
+        $xmax = max map {$_->[0]} map {@$_} @$data;
+        $ymax = max map {$_->[1]} map {@$_} @$data;
+
+        $rdata = pack 'LddddLL', $self->{TYPE}, $xmin, $ymin, $xmax, $ymax, scalar @$data, $ipoint;
+        $rdata .= $rpart . $rpoint;
+    }
+    
 
     my $attr0 = $attributes[0];
     if ( ref $attr0 eq 'HASH' ) {
@@ -207,7 +206,10 @@ sub finalize {
 1;
 
 __END__
+
 =pod
+
+=encoding UTF-8
 
 =head1 NAME
 
@@ -215,7 +217,7 @@ Geo::Shapefile::Writer - simple pureperl shapefile writer
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 SYNOPSIS
 
@@ -285,4 +287,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
