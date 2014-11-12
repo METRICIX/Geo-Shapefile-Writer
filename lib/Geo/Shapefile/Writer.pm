@@ -1,9 +1,9 @@
 package Geo::Shapefile::Writer;
 {
-  $Geo::Shapefile::Writer::VERSION = '0.005';
+  $Geo::Shapefile::Writer::VERSION = '0.006';
 }
 
-# $Id: Writer.pm 16 2014-07-30 08:16:24Z xliosha@gmail.com $
+# $Id: Writer.pm 17 2014-11-12 07:16:04Z xliosha@gmail.com $
 
 # NAME: Geo::Shapefile::Writer
 # ABSTRACT: simple pureperl shapefile writer
@@ -109,7 +109,7 @@ sub _get_header {
         map {[ $_->[0], $_->[1], $_->[2] && ($self->{$_->[2]} // $self->{"$file_type$_->[2]"}) // $_->[3] ]}
         @header_fields;
 
-    my $pack_string = join q{ }, map { sprintf '@%d%s', @$_ } (@use_fields, [$header_size, q{}]);
+    my $pack_string = join q{ }, map { sprintf '@%d%s', @$_[0,1] } (@use_fields, [$header_size, q{}]);
     return pack $pack_string, map { $_->[2] } @use_fields;
 }
 }
@@ -217,7 +217,7 @@ Geo::Shapefile::Writer - simple pureperl shapefile writer
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
